@@ -1,4 +1,5 @@
 """Test reading of cache files."""
+
 import json
 import os
 import pytest
@@ -13,15 +14,15 @@ def cache_file(tmpdir) -> str:
 
     out_file = os.path.join(out_dir, "cache.json")
     with open(out_file, "wt") as fid:
-        json.dump({
-            os.path.abspath(os.path.join(tmpdir, "speed_test.py")): {
-                "speed_func": {
-                    "nloops": 10,
-                    "score": 0.5
+        json.dump(
+            {
+                os.path.abspath(os.path.join(tmpdir, "speed_test.py")): {
+                    "speed_func": {"nloops": 10, "score": 0.5}
                 }
-            }
-        }, fid)
-    
+            },
+            fid,
+        )
+
     return tmpdir
 
 
@@ -41,12 +42,12 @@ def toml_file(tmpdir) -> str:
     outfile = os.path.join(tmpdir, "pyproject.toml")
     with open(outfile, "wt") as fid:
         fid.write("\n[tool.speedtest]\n")
-        fid.write("unit = \"ms\"\n")
+        fid.write('unit = "ms"\n')
     return tmpdir
 
 
 def test_read_cache(cache_file):
-    read_cache(cache_dir = os.path.join(cache_file, ".speedtest_cache"))
+    read_cache(cache_dir=os.path.join(cache_file, ".speedtest_cache"))
 
 
 def test_read_ini(ini_file):
@@ -54,6 +55,4 @@ def test_read_ini(ini_file):
 
 
 def test_read_toml(toml_file):
-    read_toml(local_dir = toml_file)
-
-
+    read_toml(local_dir=toml_file)

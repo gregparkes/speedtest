@@ -24,14 +24,16 @@ def _get_cache_file_name(prefix: str = "run", suffix: str = ".csv") -> str:
     return cche_file
 
 
-def read_cache(cache_name: str = "cache.json", cache_dir: Optional[str] = None) -> Dict[str, Any]:
+def read_cache(
+    cache_name: str = "cache.json", cache_dir: Optional[str] = None
+) -> Dict[str, Any]:
     """Loads a cache directory at `.speedtest_cache`.
 
     Retrieves stored data and autorange values.
     """
     if cache_dir is None:
         cache_dir = os.path.join(os.getcwd(), ".speedtest_cache")
-    
+
     cche_file = os.path.join(cache_dir, cache_name)
 
     if not os.path.isdir(cache_dir) or not os.path.isfile(cche_file):
@@ -42,7 +44,9 @@ def read_cache(cache_name: str = "cache.json", cache_dir: Optional[str] = None) 
     return data
 
 
-def read_ini(cache_name: str = "speedtest.ini", cache_dir: Optional[str] = None) -> Dict[str, Any]:
+def read_ini(
+    cache_name: str = "speedtest.ini", cache_dir: Optional[str] = None
+) -> Dict[str, Any]:
     """Loads configurations from a .ini file."""
     cfg = configparser.ConfigParser()
 
@@ -74,7 +78,9 @@ def read_ini(cache_name: str = "speedtest.ini", cache_dir: Optional[str] = None)
 
 
 def write_cache(
-    writable_speedtest_cache: Dict[str, Any], cache_name: str = "cache.json", indent: bool = True
+    writable_speedtest_cache: Dict[str, Any],
+    cache_name: str = "cache.json",
+    indent: bool = True,
 ) -> None:
     """Creates a cache directory at `.speedtest_cache`.
 
@@ -161,15 +167,20 @@ def write_txt(writable_speedtest_cache: Dict[str, Any]) -> str:
     return cche_file
 
 
-def read_toml(fname: str = "pyproject.toml", local_dir: Optional[Path] = None) -> Dict[str, Any]:
+def read_toml(
+    fname: str = "pyproject.toml", local_dir: Optional[Path] = None
+) -> Dict[str, Any]:
     """Loads the ./pyproject.toml."""
 
     # attempt to import tomllib, and if not, raise a warning and return {}
     try:
         tomllib = importlib.import_module("tomllib")
     except ImportError:
-        warnings.warn("""A `pyproject.toml` file was detected but unable to parse using `tomllib`"""
-                      f""" due to requiring 'python>=3.11', your version is {sys.version.split()[0]}; consider upgrading.""", UserWarning)
+        warnings.warn(
+            """A `pyproject.toml` file was detected but unable to parse using `tomllib`"""
+            f""" due to requiring 'python>=3.11', your version is {sys.version.split()[0]}; consider upgrading.""",
+            UserWarning,
+        )
         return {}
 
     if local_dir is None:
