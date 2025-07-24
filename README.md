@@ -1,16 +1,23 @@
 # 🚀 speedtest
 
-Testing the performance runtime of code snippets in a PyTest-style format.
+Performance profiling of code snippets in a PyTest-style format.
 
 ## 🙌 Features
 
-* Intuitive / clean format for testing the performance of code snippets.
-* Automatic integration with project tools, such as pyproject.toml, .INI files, environment variables, dotenv... etc.
-* Extended Python version support (>=3.8 to current)
+* 👍 Automatic discovery and execution of speedtest functions.
+* 👍 Intuitive / clean format with fixtures and parametrization capabilities.
+* 👍 Automatic integration with project tools, such as pyproject.toml, .INI files, environment variables, dotenv... etc.
+* 👍 Exporting of runs into CSV or TXT format.
+
+## ✨ Inspiration
+
+Python has the builtin `time` and `timeit` modules which in theory handle the heavy lifting of measuring a functions' execution time, but in practice I've often written lots of boilerplate to perform measurement of snippets in a more systematic way.
+
+More often than not, I also don't want to embed profiling code within my Python module (such as wrapping methods with `time.perf_counter()`) for the purposes of testing development implementations.
 
 ## 👋 Hello World
 
-Imagine using pytest, but instead of testing your code, it would perform speed testing on functions for you!
+Imagine using pytest, but instead of unit testing your codebase, it would perform speed testing on functions for you!
 
 Define a Python source file 🐍 with the following code:
 
@@ -20,7 +27,7 @@ def speed_square():
     _ = [x ** 2 for x in range(1000000)]
 ```
 
-To run speedtest, navigate to the directory containing your code and simply call it from command-line:
+To run speedtest ⚡, navigate to the directory containing your code and simply call it from command-line:
 
 ```bash
 speedtest .
@@ -42,11 +49,11 @@ example/speed_square.py:speed_my_squarer ------------------- 20 loops  , 12.5 ms
 Clone the repository to your local area and then install into your virtual environment, Poetry or uv using `pip`:
 
 ```bash
-git clone https:<repo>/speedtest.git
+git clone https://github.com/gregparkes/speedtest.git
 pip3 install .
 ```
 
-To use some optional quality of life packages such as Rich, python-dotenv, use:
+The base installation has *no 3rd party dependencies*, however it is recommended to use some quality of life packages such as Rich, python-dotenv, use:
 
 ```
 pip3 install .[all]
@@ -78,7 +85,7 @@ def random_method():
 
 ### Fixtures
 
-`speedtest` supports fixtures which run setup code prior to running the session. This is handy for any long computations like reading in files or network I/O which are a pre-requisite to getting any objects in an appropriate state for benchmarking.
+speedtest supports fixtures which run setup code prior to running the session. This is handy for any long computations like reading in files or network I/O which are a pre-requisite to getting any objects in an appropriate state for benchmarking.
 
 ```python
 import speedtest
@@ -125,7 +132,7 @@ Fixtures MUST be defined in the file in which they are used. Fixtures can only b
 
 ### Parametrization
 
-`speedtest` supports the capability to provide different *basic* arguments to your speed testing, for example it is a common use-case to vary over 1 or more parameters and test the speed relative to each parameter combination.
+speedtest ⚡ supports the capability to provide different *basic* arguments to your speed testing, for example it is a common use-case to vary over 1 or more parameters and test the speed relative to each parameter combination.
 
 ```python
 import speedtest
@@ -150,7 +157,7 @@ example2/speed_param.py:speed_square[n=100000] ------------ 20 loops  , 12.3 mse
 
 #### Multiple arguments
 
-speedtest supports multiple arguments, supplied as a list of tuples:
+speedtest ⚡ supports multiple arguments, supplied as a list of tuples:
 
 ```python
 @speedtest.parametrize("n, pow_fac", [(1000, 2), (10000, 3), (100000, 4)])
@@ -182,11 +189,11 @@ Leading to 3x3 speed-tests.
 
 #### Compare Time units
 
-By default, `speedtest` will print/display timing units that is closest to the relevant precision using `--unit auto`; to enable comparison along one unit scale (i.e 'ms') set `--unit ms`.
+By default, speedtest will print/display timing units that is closest to the relevant precision using `--unit auto`; to enable comparison along one unit scale (i.e 'ms') set `--unit ms`.
 
 #### Parallelism
 
-`speedtest` supports parallel computation out-of-the-box using the `--parallel` flag. Unfortunately print statements do not appear when using multiprocessing until the end of the run.
+speedtest ⚡ supports parallel computation out-of-the-box using the `--parallel` flag. Unfortunately print statements do not appear when using multiprocessing until the end of the run.
 
 #### CSV output
 
@@ -209,7 +216,7 @@ Setting up your project to use speedtest has never been easier - use one or more
 Arguments passed to `speedtest` can be defined in the `pyproject.toml` file of a project you're working on instead of directly, use `tool.speedtest`:
 
 ```toml
-#pyproject.toml
+# pyproject.toml
 [tool.speedtest]
 unit = ms
 parallel = true
@@ -230,7 +237,7 @@ parallel = true
 
 ### Environment variables
 
-If `python-dotenv` is installed, `speedtest` will automatically search for a `.env` file in the local directory of the speedtest run. Environment variables must begin with the "**SPEEDTEST_**" prefix. This `.env` can include things like:
+If `python-dotenv` is installed, speedtest ⚡ will automatically search for a `.env` file in the local directory of the speedtest run. Environment variables must begin with the "**SPEEDTEST_**" prefix. This `.env` can include things like:
 
 ```bash
 # .env
@@ -239,15 +246,19 @@ SPEEDTEST_PARALLEL=1
 
 ### Caching
 
-`speedtest` will create a '.speedtest_cache' directory in the local directory where speedtest is executed. This cache helps to accelerate multiple calls to `speedtest` by storing the best nloops and other parameters. To stop this cache creation, use the `--no-cache` flag.
+speedtest ⚡ will create a '.speedtest_cache' directory in the local directory where speedtest is executed. This cache helps to accelerate multiple calls to `speedtest` by storing the best nloops and other parameters. To stop this cache creation, use the `--no-cache` flag.
 
 ## ❓ FAQ
 
 #### Q: Number of loops abnormally low/high after I've made changes to the speed function?
 
-A: `speedtest` caches the best `nloops` the first time the function is run, and stores it in the `.speedtest_cache` folder. This helps to speed up repetitive calls to `speedtest`, but can mis-calibrate your speedtest run if significant code changes are made to the underlying function.
+A: speedtest caches the best `nloops` the first time the function is run, and stores it in the `.speedtest_cache` folder. This helps to speed up repetitive calls to speedtest, but can mis-calibrate your speedtest run if significant code changes are made to the underlying function.
 
-You can either
+You can either:
 
 * Delete `.speedtest_cache/` folder.
 * Use `--ignore-cache` flag to ignore the cache file and override it.
+
+## License
+
+This project is distributed under the MIT license. For further details read [LICENSE.txt](license.txt).
