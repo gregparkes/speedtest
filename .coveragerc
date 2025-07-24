@@ -1,0 +1,4 @@
+[run]
+omit =
+    speedtest/__main__.py
+    speedtest/_log.py

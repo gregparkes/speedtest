@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "speedtest"
+version = "0.1.0"
+description = "Testing the performance runtime of your code snippets in a PyTest-style format."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.scripts]
+speedtest = "speedtest.__main__:cli_interface"
+
+[dependency-groups]
+all = [
+    "python-dotenv>=1.0.0",
+    "rich>=14.0.0",
+]
+dev = [
+    "pytest-cov>=5",
+    "python-dotenv>=1.0.0",
+    "rich>=14.0.0",
+]
+
+[tool.pytest]
+testpaths = ["tests"]
