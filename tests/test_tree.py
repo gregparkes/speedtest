@@ -9,7 +9,7 @@ def test_basic():
     inputs = textwrap.dedent("""\n
     def speed_basic():
         _ = [x * 2 for x in range(1000)]
-    
+
     """)
 
     r = parse_python_to_tree(str(inputs))
@@ -27,14 +27,14 @@ def test_basic():
     @speedtest.mark
     def normal_basic():
         _ = [x * 2 for x in range(1000)]
-    
+
     """),
         textwrap.dedent("""\n
     from speedtest import mark
     @mark
     def normal_basic():
         _ = [x * 2 for x in range(1000)]
-    
+
     """),
     ],
 )
@@ -49,7 +49,7 @@ def test_multi():
     inputs = textwrap.dedent("""\n
     def speed_basic():
         _ = [x * 2 for x in range(1000)]
-    
+
     def speed_basic2():
         return 42
     """)
@@ -69,7 +69,7 @@ def test_fixture():
     @speedtest.fixture
     def result():
         return 42
-    
+
     def speed_basic(result):
         return result + 1
     """)
