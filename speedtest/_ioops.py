@@ -8,7 +8,7 @@ import itertools as it
 import csv
 import configparser
 from pathlib import Path
-from typing import Any, Optional, Dict
+from typing import Any, Optional, Dict, Union
 import warnings
 
 from speedtest._stringify import stringify_time
@@ -168,7 +168,7 @@ def write_txt(writable_speedtest_cache: Dict[str, Any]) -> str:
 
 
 def read_toml(
-    fname: str = "pyproject.toml", local_dir: Optional[Path] = None
+    fname: str = "pyproject.toml", local_dir: Optional[Union[str, Path]] = None
 ) -> Dict[str, Any]:
     """Loads the ./pyproject.toml."""
 
@@ -185,13 +185,18 @@ def read_toml(
 
     if local_dir is None:
         local_dir = Path.cwd()
-    path = local_dir / fname
+    path = Path(local_dir) / fname
 
     # if the file is present, open it and load the project.file.
-    if os.path.isfile(path):
+    if os.path.isfile(path) and path.suffix == ".toml":
         with open(path, "rb") as tomlf:
             data = tomllib.load(tomlf)
         # if our tool is present...
-        if "tool.speedtest" in data:
-            return data["tool.speedtest"]
+        if "tool" in data and "speedtest" in data["tool"]:
+            return data["tool"]["speedtest"]
+
+    warnings.warn(
+        """No `pyproject.toml` file found or it does not contain the 'tool.speedtest' section.""",
+        UserWarning,
+    )
     return {}
