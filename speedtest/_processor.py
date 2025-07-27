@@ -17,7 +17,7 @@ from typing import List, Callable
 
 from speedtest._kwargs import Kwargs
 from speedtest._speedtree import parse_python_to_tree
-from speedtest._log import log_output
+from speedtest._log import log_output, optional_rich_status
 from speedtest._stringify import stringify_time, map_stringify_time
 from speedtest._ioops import (
     read_cache,
@@ -36,8 +36,20 @@ def _is_valid_python_file(path: str) -> bool:
     )
 
 
+@optional_rich_status("Discovering source files...")
 def _discover_source_files(srcs: List[str]) -> List[str]:
-    """Discover all valid Python source files."""
+    """Discover all valid Python source files.
+
+    Parameters
+    ----------
+    srcs : List[str]
+        List of source file paths to discover valid Python files from.
+
+    Returns
+    -------
+    List[str]
+        List of valid Python source file paths.
+    """
 
     all_parsable_files: List[str] = []
 
@@ -54,7 +66,8 @@ def _discover_source_files(srcs: List[str]) -> List[str]:
         if _is_valid_python_file(file_or_dir_local):
             all_parsable_files.append(file_or_dir_local)
 
-        # points to a directory structure - use glob to scan the Python files in the sub-folders of the directory.
+        # points to a directory structure - use glob to scan the Python files
+        # in the sub-folders of the directory.
         elif os.path.isdir(file_or_dir_local):
             valid_files = [
                 f
@@ -70,15 +83,24 @@ def _discover_source_files(srcs: List[str]) -> List[str]:
 
 
 def _process_source_file(src: str, kwargs: Kwargs, cache_data):
-    """Processes a given source file, with all of the methods within.
+    """
+    Processes a given source file and times all detected methods within.
 
-    Args:
-        src (str): Python source file and path
-        kwargs (Kwargs): Command line keyword arguments
-        cache_data (dict): Cacheable data.
+    Parameters
+    ----------
+    src : str
+        Path to the source Python file to process.
+    kwargs : Kwargs
+        Command line keyword arguments controlling behavior such as verbosity,
+        cache usage, and output formatting.
+    cache_data : dict
+        Cacheable data containing previously computed timing results.
 
-    Returns:
-        writecache: Writable items to store in cache files.
+    Returns
+    -------
+    writable_speedtest_cache : dict
+        Writable items to store in cache files, mapping source files and method
+        signatures to timing properties.
     """
 
     # -------------------------------------------------------------
@@ -128,7 +150,7 @@ def _process_source_file(src: str, kwargs: Kwargs, cache_data):
     #       Loop over every function name that was detected
     #       and time it.
     # -------------------------------------------------------------
-    for method in children.methods:
+    for i, method in enumerate(children.methods):
         # get function method as an object.
         script_func = getattr(module_, method.name)
 
@@ -193,7 +215,16 @@ def _process_source_file(src: str, kwargs: Kwargs, cache_data):
             # on recommendation of the timer.repeat docstrings - we take the min() of the scores as a lower-bound for best-case-scenario of speed.
             # wrap the function call in try-catch.
             try:
-                scores = timer.repeat(repeat=kwargs.nreps, number=properties["nloops"])
+                if not kwargs.parallel:
+                    timer_func = optional_rich_status(
+                        f"Processing '{script_name}.py' ({i+1}/{len(children.methods)})..."
+                    )(timer.repeat)
+                else:
+                    timer_func = timer.repeat
+
+                # run the timer and collect the scores.
+                scores = timer_func(repeat=kwargs.nreps, number=properties["nloops"])
+                # scores = timer.repeat(repeat=kwargs.nreps, number=properties["nloops"])
                 best_time_loop = min(scores) / properties["nloops"]
                 # update the best score to store in the cache.
                 properties["score"] = best_time_loop
@@ -214,9 +245,9 @@ def _process_source_file(src: str, kwargs: Kwargs, cache_data):
                     rhs_print = f"FAILED ({e.__class__.__name__}): {e}"
 
             if src in writable_speedtest_cache:
-                writable_speedtest_cache[src][method.name + printable_parameters] = (
-                    properties
-                )
+                writable_speedtest_cache[src][
+                    method.name + printable_parameters
+                ] = properties
             else:
                 writable_speedtest_cache[src] = {
                     method.name + printable_parameters: properties
