@@ -3,7 +3,6 @@
 import json
 import os
 from pathlib import Path
-import tomllib
 import pytest
 
 from speedtest._ioops import read_cache, read_ini, read_toml
@@ -85,9 +84,5 @@ def test_read_toml(toml_file):
 
 def test_read_toml_no_file():
     """Tests reading a TOML file that does not exist."""
-    with pytest.warns(
-        UserWarning,
-        match="No `pyproject.toml` file found or it does not contain the 'tool.speedtest' section.",
-    ):
-        no_toml_data = read_toml(local_dir=Path("fake_dir"))
+    no_toml_data = read_toml(local_dir=Path("fake_dir"))
     assert no_toml_data == {}

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "speedtest"
 version = "0.1.0"
-description = "Testing the performance runtime of your code snippets in a PyTest-style format."
+description = "Testing the profiling of code snippets in a PyTest-style format."
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = []
@@ -37,3 +37,6 @@ exclude = ["/**/__init__.py"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+
+[tool.pylint]
+disable = ["C0209"] 

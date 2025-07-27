@@ -196,8 +196,4 @@ def read_toml(
         if "tool" in data and "speedtest" in data["tool"]:
             return data["tool"]["speedtest"]
 
-    warnings.warn(
-        """No `pyproject.toml` file found or it does not contain the 'tool.speedtest' section.""",
-        UserWarning,
-    )
     return {}
