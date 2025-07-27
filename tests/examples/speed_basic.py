@@ -1,4 +1,11 @@
-"""Example 1."""
+"""
+Example of a basic speedtest using the speedtest library.
+This file is used to test the speedtest functionality in a simple manner.
+It includes a fixture and two functions that perform list comprehensions.
+This is a minimal example to demonstrate the speedtest capabilities.
+
+@MIT license.
+"""
 
 import speedtest
 

@@ -24,5 +24,5 @@ def test_run_session_examples():
 
 
 def test_run_session_examples_parallel():
-    path = str(Path(__file__).parent / "./examples/speed_basic.py")
+    path = str(Path(__file__).parent / "./examples")
     run_session(Kwargs(file_or_dir=[path], no_cache=True, parallel=True), print)

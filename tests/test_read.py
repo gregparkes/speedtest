@@ -66,9 +66,28 @@ def test_read_ini(ini_file):
     }
 
 
+def test_read_ini_no_file():
+    """Tests reading an ini file that does not exist."""
+    with pytest.warns(
+        UserWarning, match="No `speedtest` section found in the ini file."
+    ):
+        no_ini_data = read_ini("fake.ini")
+    assert no_ini_data == {}
+
+
 def test_read_toml(toml_file):
     """Reads in a TOML file."""
     toml_data = read_toml(local_dir=Path(toml_file))
     assert toml_data == {
         "unit": "ms",
     }
+
+
+def test_read_toml_no_file():
+    """Tests reading a TOML file that does not exist."""
+    with pytest.warns(
+        UserWarning,
+        match="No `pyproject.toml` file found or it does not contain the 'tool.speedtest' section.",
+    ):
+        no_toml_data = read_toml(local_dir=Path("fake_dir"))
+    assert no_toml_data == {}

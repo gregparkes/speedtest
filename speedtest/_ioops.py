@@ -57,6 +57,7 @@ def read_ini(
 
     sections = cfg.sections()
     if "speedtest" not in sections:
+        warnings.warn("No `speedtest` section found in the ini file.")
         return {}
 
     results = {}
@@ -175,7 +176,7 @@ def read_toml(
     # attempt to import tomllib, and if not, raise a warning and return {}
     try:
         tomllib = importlib.import_module("tomllib")
-    except ImportError:
+    except ImportError:  # pragma: no cover
         warnings.warn(
             """A `pyproject.toml` file was detected but unable to parse using `tomllib`"""
             f""" due to requiring 'python>=3.11', your version is {sys.version.split()[0]}; consider upgrading.""",
