@@ -7,13 +7,13 @@ def test_parametrize():
         return a + b
 
     # call with empty args and parametrize.
-    for option in f:
-        pass
+    for option, result in zip(f, [(1, 2), (2, 3)]):
+        assert option() == sum(result)
 
     @parametrize("a", [1, 2, 3])
     def f2(a):
         return a**2
 
     # call with empty args and parametrize.
-    for option in f2:
-        pass
+    for option, result in zip(f2, [1, 2, 3]):
+        assert option() == result**2

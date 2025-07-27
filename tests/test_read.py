@@ -2,6 +2,8 @@
 
 import json
 import os
+from pathlib import Path
+import tomllib
 import pytest
 
 from speedtest._ioops import read_cache, read_ini, read_toml
@@ -9,6 +11,7 @@ from speedtest._ioops import read_cache, read_ini, read_toml
 
 @pytest.fixture
 def cache_file(tmpdir) -> str:
+    """Generates a cache file."""
     out_dir = os.path.join(tmpdir, ".speedtest_cache")
     os.mkdir(out_dir)
 
@@ -28,6 +31,7 @@ def cache_file(tmpdir) -> str:
 
 @pytest.fixture
 def ini_file(tmpdir) -> str:
+    """Generates an ini file."""
     outfile = os.path.join(tmpdir, "speedtest.ini")
     with open(outfile, "wt") as fid:
         fid.write("[speedtest]\n")
@@ -39,20 +43,32 @@ def ini_file(tmpdir) -> str:
 
 @pytest.fixture
 def toml_file(tmpdir) -> str:
+    """Generates a TOML file."""
     outfile = os.path.join(tmpdir, "pyproject.toml")
-    with open(outfile, "wt") as fid:
+    with open(outfile, "wt", encoding="utf-8") as fid:
         fid.write("\n[tool.speedtest]\n")
         fid.write('unit = "ms"\n')
     return tmpdir
 
 
 def test_read_cache(cache_file):
+    """Read a cache file."""
     read_cache(cache_dir=os.path.join(cache_file, ".speedtest_cache"))
 
 
 def test_read_ini(ini_file):
-    read_ini(ini_file)
+    """Tests reading an ini file."""
+    ini_data = read_ini(ini_file)
+    assert ini_data == {
+        "unit": "ms",
+        "no_cache": True,
+        "print_pad_width": 80,
+    }
 
 
 def test_read_toml(toml_file):
-    read_toml(local_dir=toml_file)
+    """Reads in a TOML file."""
+    toml_data = read_toml(local_dir=Path(toml_file))
+    assert toml_data == {
+        "unit": "ms",
+    }
